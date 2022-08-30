@@ -1,7 +1,7 @@
 import express from "express";
-import { User } from "../models/user";
-import { Ticket } from "../models/ticket";
-import { Event } from "../models/event";
+import User from "../models/user.js";
+import Ticket from "../models/ticket.js";
+import Event from "../models/event.js";
 import moment from "moment";
 
 var router = express.Router();

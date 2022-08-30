@@ -1,9 +1,8 @@
 import express from "express";
-import { Ticket } from "../models/ticket";
-import { User } from "../models/user";
+import Ticket from "../models/ticket.js";
 var router = express.Router();
 
-router.get("/", (res) => {
+router.get("/", (req, res) => {
   Ticket.find({}, function (err, tickets) {
     if (err) console.log(err);
     else {
@@ -13,32 +12,30 @@ router.get("/", (res) => {
   });
 });
 
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   try {
-    let id;
-    let { username } = req.body;
-    const result = new Ticket({ username });
-    result.save((err, res) => {
-      id = result._id;
-    });
-
-    User.find({ username: req.body.username }, function (err, foundUser) {
-      if (err) {
-        console.log(err);
-        return res.sendStatus(200);
-      } else {
-        if (foundUser.length) {
-          foundUser[0].tickets.push(result);
-          foundUser[0].save(() => {
-            return res.send(foundUser[0]);
-          });
-        } else
-          return res
-            .status(404)
-            .send("No user found associated with this number");
-      }
-    });
+    const result = await Ticket.create(req.body);
+    res.json(result);
   } catch (err) {
+    console.log(err);
+    return res.status(500).send(err.message);
+  }
+});
+
+router.patch("/:id", async (req, res) => {
+  try {
+    const result = await Ticket.findByIdAndUpdate(req.params.id, req.body);
+    res.json(result);
+  } catch (error) {
+    console.log(err);
+    return res.status(500).send(err.message);
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const result = await Ticket.findByIdAndDelete(req.params.id);
+  } catch (error) {
     console.log(err);
     return res.status(500).send(err.message);
   }

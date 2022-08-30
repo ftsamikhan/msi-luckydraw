@@ -1,7 +1,7 @@
 import express from "express";
-import { Event } from "../models/event";
-import { User } from "../models/user";
-import { Winner } from "../models/winners";
+import Event from "../models/event.js";
+import User from "../models/user.js";
+import Winner from "../models/winners.js";
 import moment from "moment";
 
 var router = express.Router();

@@ -1,6 +1,7 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
 const ticketSchema = new mongoose.Schema({
+  categories : String,
   ticketNumber: Number,
 });
 

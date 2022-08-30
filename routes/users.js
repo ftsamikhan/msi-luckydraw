@@ -1,47 +1,54 @@
 import express from "express";
-import { User } from "../models/user";
+import User from "../models/user.js";
 var router = express.Router();
 
-async function addUser(req, res) {
+router.get("/", async (req, res) => {
   try {
-    await User.find({ username: req.body.username }, (err, result) => {
-      if (err) throw err;
-      if (result.length) {
-        return res.send(result);
-      } else {
-        let id;
-        let { username, email, password, ticketNum, admin } = req.body;
-        const user = new User({ username, email, password, ticketNum, admin });
-        user.save((err) => {
-          id = user._id;
-          User.findById(id, (err, foundUser) => {
-            console.log(foundUser);
-            if (err) {
-              console.log(err);
-            } else {
-              return res.send(foundUser);
-            }
-          });
-        });
-      }
-    });
-  } catch (err) {
-    console.log(err);
-    return res.send(500).send(err.message);
+    const result = await User.find();
+    res.json(result);
+  } catch (error) {
+    res.json({ message: error });
   }
-}
-
-router.get("/users", (res) => {
-  User.find({}, (err, users) => {
-    if (err) {
-      console.log(err);
-    }
-    if (users.length) {
-      return res.status(200).send(users);
-    } else return res.status(200).send("No user found!");
-  });
 });
 
-router.post("/", addUser);
+router.get("/:id", async (req, res) => {
+  try {
+    const result = await User.findById(req.params.id);
+    res.json(result);
+    next();
+  } catch (error) {
+    res.json({ message: error });
+  }
+});
+
+router.post("/", async (req, res, next) => {
+  try {
+    const result = await User.create(req.body);
+    res.status(200).json(result);
+    next();
+  } catch (error) {
+    res.json({ message: error });
+  }
+});
+
+router.patch("/:id", async (req, res, next) => {
+  try {
+    const result = await User.findByIdAndUpdate(req.params.id, req.body);
+    res.status(200).json(result);
+    next();
+  } catch (error) {
+    res.status(500).json({ "User data not updated! ": message.error });
+  }
+});
+
+router.delete("/:id", async (req, res, next) => {
+  try {
+    const result = await User.findByIdAndDelete(req.params.id);
+    res.status(200).json(result);
+    next();
+  } catch (error) {
+    res.status(500).json({ "User data not deleted! ": message.error });
+  }
+});
 
 export default router;

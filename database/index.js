@@ -1,22 +1,20 @@
 import mongoose from "mongoose";
 
-const mdbURL = "mongodb://localhost:27017/LotteryDB";
+const mdbURL = "mongodb://localhost:27017/LuckyDrawDB";
 
-export default function mongooseConnect (app) {
+export default function mongooseConnect () {
   mongoose
     .connect(mdbURL, {
       useNewUrlParser: true,
-      useUnifiedTopolog: true,
-      useCreateIndex: true,
-      useFindAndModify: false,
+      useUnifiedTopology: true,
     })
     .catch((error) => {
       console.log("An error occured with mongoose connection: ", error.message);
     });
 
   mongoose.connection.once("open", function () {
-    console.log("Mongoose default connection is open to ", dbURL);
-    app.emit("ready");
+    console.log("Mongoose default connection is open to ", mdbURL);
+    // app.emit("ready");
   });
 
   mongoose.connection.on("disconnected", function () {
